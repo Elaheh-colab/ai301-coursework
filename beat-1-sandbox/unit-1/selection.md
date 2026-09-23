@@ -18,7 +18,7 @@ wrong label is not graded.
 https://github.com/codepath/pathreview-ai301-fa26-s3/issues/1
 
 **Verdict output**
-
+```json
 {
   "item": "https://github.com/codepath/pathreview-ai301-fa26-s3/issues/1",
   "checks": [
@@ -30,17 +30,7 @@ https://github.com/codepath/pathreview-ai301-fa26-s3/issues/1
   ],
   "verdict": "accept"
 }
-
-**The verdict must record `accept` for this issue.** Choose an issue your own skill
-accepts. If your skill rejects every candidate you try, that is a signal about your
-rubric rather than about the issues: revise it and re-run — retries are unlimited and a
-partial re-run costs about $0.20 — or run the skill on different candidates. Output
-recording `reject` for the issue you chose earns no credit for this field.
-
 ```
-paste the output here, including the closing JSON block
-```
-
 ---
 
 ## Eval iterations
