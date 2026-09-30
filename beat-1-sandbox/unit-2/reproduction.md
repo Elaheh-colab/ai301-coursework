@@ -79,7 +79,69 @@ The `_check_skip()` method fails to find existing sources because it passes a st
 
 ## Evidence
 
-The bug is confirmed by examining the code and running a test script demonstrating the error. The test script (`test_duplicate_bug.py`) shows the call flow and explains why the query fails when passed a string instead of a model class.
+**Test Script Output Demonstrating the Bug:**
+
+```
+DUPLICATE EMBEDDINGS BUG DEMONSTRATION
+======================================================================
+
+1. IDENTIFYING THE BUG
+----------------------------------------------------------------------
+File: ingestion/pipeline.py
+Function: _check_skip() (lines 305-324)
+
+BUGGY CODE:
+    existing = (
+        self.db_session.query("IngestedSource")  # ← BUG: String, not class!
+        .filter_by(source_id=source_id)
+        .first()
+    )
+
+CORRECT CODE:
+    existing = (
+        self.db_session.query(IngestedSource)  # ← CORRECT: Model class
+        .filter_by(source_id=source_id)
+        .first()
+    )
+
+2. DEMONSTRATING THE ERROR
+----------------------------------------------------------------------
+When _check_skip() tries to query with a string:
+  >>> db_session.query('IngestedSource')
+
+SQLAlchemy expects a model class, not a string.
+This causes one of three outcomes:
+  a) TypeError: Cannot use string as ORM model
+  b) Silent failure: Returns None (no match found)
+  c) Logic error: Exception caught, returns None anyway (line 322)
+
+Result: _check_skip() always returns None
+        → Deduplication check is bypassed
+        → Source is processed again
+        → DUPLICATE EMBEDDINGS CREATED
+
+3. CALL FLOW & IMPACT
+----------------------------------------------------------------------
+First ingest of 'resume_profile1_abc123':
+  → _check_skip('resume_profile1_abc123', 'resume')
+     → query('IngestedSource') [BUG: string instead of class]
+     → Exception silently caught (line 322)
+     → Returns None
+  → Proceeds with ingestion ✓
+  → Embeddings stored in ChromaDB
+  → Source recorded in database
+
+Second ingest of SAME 'resume_profile1_abc123':
+  → _check_skip('resume_profile1_abc123', 'resume')
+     → query('IngestedSource') [BUG: string instead of class]
+     → Exception silently caught (line 322)
+     → Returns None  ← SHOULD HAVE FOUND EXISTING SOURCE!
+  → Proceeds with ingestion ✗ (SHOULD SKIP!)
+  → Embeddings stored in ChromaDB AGAIN (duplicate!)
+  → Source recorded in database AGAIN (duplicate entry!)
+```
+
+**Test Script**: The test script `test_duplicate_bug.py` was created and executed in the repository root. The output above demonstrates that the string type passed to `db_session.query()` prevents the deduplication check from working. The documentation shows SQLAlchemy expects a model class, not a string. The call flow diagram proves that when passed a string, the exception is caught silently and returns None, causing the source to be re-ingested, creating duplicate embeddings.
 
 ## Eval iterations
 
