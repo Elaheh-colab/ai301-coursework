@@ -79,69 +79,59 @@ The `_check_skip()` method fails to find existing sources because it passes a st
 
 ## Evidence
 
-**Test Script Output Demonstrating the Bug:**
+**Actual Buggy Code from ingestion/pipeline.py (lines 305-324):**
 
-```
-DUPLICATE EMBEDDINGS BUG DEMONSTRATION
-======================================================================
+```python
+def _check_skip(self, source_id: str, source_type: str) -> IngestResult | None:
+    """
+    Check if source has already been ingested.
 
-1. IDENTIFYING THE BUG
-----------------------------------------------------------------------
-File: ingestion/pipeline.py
-Function: _check_skip() (lines 305-324)
+    Returns IngestResult if should skip, None if should proceed.
+    """
+    try:
+        # Query database for existing source
+        # This assumes a table/model named IngestedSource
+        existing = (
+            self.db_session.query("IngestedSource")  # ← BUG: String instead of model class
+            .filter_by(source_id=source_id)
+            .first()
+        )
 
-BUGGY CODE:
-    existing = (
-        self.db_session.query("IngestedSource")  # ← BUG: String, not class!
-        .filter_by(source_id=source_id)
-        .first()
-    )
+        if existing:
+            logger.info("Source already ingested, skipping", source_id=source_id)
+            return IngestResult(
+                source_id=source_id,
+                chunk_count=0,
+                skipped=True,
+                skip_reason="Source already ingested",
+            )
+    except Exception as e:
+        logger.warning(
+            "Could not check if source already ingested",
+            source_id=source_id,
+            error=str(e),
+        )
 
-CORRECT CODE:
-    existing = (
-        self.db_session.query(IngestedSource)  # ← CORRECT: Model class
-        .filter_by(source_id=source_id)
-        .first()
-    )
-
-2. DEMONSTRATING THE ERROR
-----------------------------------------------------------------------
-When _check_skip() tries to query with a string:
-  >>> db_session.query('IngestedSource')
-
-SQLAlchemy expects a model class, not a string.
-This causes one of three outcomes:
-  a) TypeError: Cannot use string as ORM model
-  b) Silent failure: Returns None (no match found)
-  c) Logic error: Exception caught, returns None anyway (line 322)
-
-Result: _check_skip() always returns None
-        → Deduplication check is bypassed
-        → Source is processed again
-        → DUPLICATE EMBEDDINGS CREATED
-
-3. CALL FLOW & IMPACT
-----------------------------------------------------------------------
-First ingest of 'resume_profile1_abc123':
-  → _check_skip('resume_profile1_abc123', 'resume')
-     → query('IngestedSource') [BUG: string instead of class]
-     → Exception silently caught (line 322)
-     → Returns None
-  → Proceeds with ingestion ✓
-  → Embeddings stored in ChromaDB
-  → Source recorded in database
-
-Second ingest of SAME 'resume_profile1_abc123':
-  → _check_skip('resume_profile1_abc123', 'resume')
-     → query('IngestedSource') [BUG: string instead of class]
-     → Exception silently caught (line 322)
-     → Returns None  ← SHOULD HAVE FOUND EXISTING SOURCE!
-  → Proceeds with ingestion ✗ (SHOULD SKIP!)
-  → Embeddings stored in ChromaDB AGAIN (duplicate!)
-  → Source recorded in database AGAIN (duplicate entry!)
+    return None
 ```
 
-**Test Script**: The test script `test_duplicate_bug.py` was created and executed in the repository root. The output above demonstrates that the string type passed to `db_session.query()` prevents the deduplication check from working. The documentation shows SQLAlchemy expects a model class, not a string. The call flow diagram proves that when passed a string, the exception is caught silently and returns None, causing the source to be re-ingested, creating duplicate embeddings.
+**Observed Behavior:**
+
+When `_check_skip()` is called:
+1. Line 318 tries: `self.db_session.query("IngestedSource")`
+2. SQLAlchemy raises TypeError (expects model class, not string)
+3. Exception is caught by the try/except block (line 322)
+4. Function logs a warning and returns `None` (line 329)
+5. Caller (`ingest_resume()` line 75) receives `None` instead of `IngestResult(skipped=True)`
+6. Caller proceeds with ingestion (line 76: `if skip_result:` is False when None)
+7. Same source is ingested again, creating duplicate embeddings
+
+**Evidence from Calls to _check_skip:**
+- Line 75: `ingest_resume()` calls `_check_skip(source_id, "resume")`
+- Line 139: `ingest_readme()` calls `_check_skip(source_id, "readme")`
+- Line 203: `ingest_repo_metadata()` calls `_check_skip(source_id, "repo")`
+
+All three methods depend on `_check_skip()` to prevent duplicates. When it silently fails, all three methods re-ingest, creating duplicates in ChromaDB and the database.
 
 ## Eval iterations
 
