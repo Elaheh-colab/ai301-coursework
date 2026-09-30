@@ -90,7 +90,7 @@ fields.
 
 Run 1: 18/20 (initial rubric, missing disclosure category floor)
 Run 2: 19/20 (adjusted behavior-matches-issue to accept honest cannot-reproduce cases)
-Run 3: 20/20 (loosened steps-complete evidence guide, all categories matched)
+Run 3: 19/20 (loosened steps-complete evidence guide, but disclosure category remained unmet)
 
 **Package analysis**
 
