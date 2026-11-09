@@ -55,10 +55,9 @@ happened; these entries are the toolkit's own timeline.
 All four entries are graded. Keep every heading below, and fill each
 one in the week it belongs to.
 
-**Unit 5: [one line on the tool work]**
+**Unit 5: Built and patched issue-scout's search strategy and rubric**
 
-[2-4 sentences: what you built (the scout, your strategy), what broke
-or fell short, what changed because of it.]
+I built issue-scout's search strategy: two `gh search issues` queries, a fit profile, and ranking filters that drop assigned and stale issues, then graded the top results. The first scan fell short: only one query ran, the maintainer check counted repo-owner commits instead of responses, and the rubric passed issues it should have rejected, including #519, whose body banned coding agents from the completing PR. I patched the rubric to require owner or collaborator comments within 30 days, read issue bodies for AI bans, and limit bounded issues to two named files, then re-ran the scan with a pytest query and logged each change in scan-notes.md.
 
 **Unit 6: [one line on the tool work]**
 
