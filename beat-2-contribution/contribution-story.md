@@ -87,6 +87,7 @@ I searched with issue-scout's strategy: a fit profile for Python, pytest, and ba
 - What it produced: the scan and direct grades for #35 and #37, with #35 accepted and #37 rejected on the bounded-scope check
 - Difficulties: it counted repo-owner commits as maintainer activity, ignored claim comments and reservation language, and its file-count rule was ambiguous; the first scan also ran only one query
 - What changed: patched the maintainer check to require owner or collaborator comments within 30 days, added issue-body reads for AI rules, limited bounded issues to two named files, and switched the query to pytest
+  
 ---
 
 ## Understanding the Issue
