@@ -1,4 +1,4 @@
-# Contribution: [Issue Title]
+# Contribution: A finding never says how its group score was aggregated, or whether a number is absolute
 
 Path: `beat-2-contribution/contribution-story.md`
 
@@ -78,9 +78,8 @@ drafted, what you did with the draft.]
 ---
 
 ## Why I Chose This Issue
-## Why I Chose This Issue
 
-I searched with issue-scout's strategy: a fit profile for Python, pytest, and backend work, two `gh search issues` queries, and ranking filters that drop assigned and stale issues. The first scans surfaced open-source candidates that mostly failed on maintainer activity or on AI rules, so I broadened the rubric and re-ran the scan. Then I graded two llmsectest issues directly: #35 was accepted, and #37 was rejected on the bounded-scope check, because it names three report files and the rule allows two. I chose #37 anyway because the fix adds one labeled field to the reports, and it has less overlap with other work than #35, which touches the LLM10 detector that PR #22 changed recently. My claim comment is at [(https://github.com/wehnsdaefflae/llmsectest/issues/37#issuecomment-6729558550)]. The scout fell short in several ways: the maintainer check counted repo-owner commits instead of responses, it ignored claim comments and reservations in issue bodies, and its file-count rule was ambiguous. I patched the rubric for the first two and recorded the third in scan-notes.md.
+I searched with issue-scout's strategy: a fit profile for Python, pytest, and backend work, two `gh search issues` queries, and ranking filters that drop assigned and stale issues. The first scan accepted five candidates, but on closer reading one of them, #519, reserved its issue for outside contributors and the rubric had missed it, so I patched the rubric and re-ran the scan. Then I graded two llmsectest issues directly: #35 was accepted, and #37 was rejected on the bounded-scope check, because it names three report files and the rule allows two. I chose #37 anyway because the fix adds one labeled field to the reports, and it has less overlap with other work than #35, which touches the LLM10 detector that PR #22 changed recently. My claim comment is at https://github.com/wehnsdaefflae/llmsectest/issues/37#issuecomment-6729558550. The scout fell short in several ways: the maintainer check counted repo-owner commits instead of responses, it ignored claim comments and reservations in issue bodies, and its file-count rule was ambiguous. I patched the rubric for the first two and recorded the third in scan-notes.md.
 
 **Toolkit**
 
@@ -88,8 +87,6 @@ I searched with issue-scout's strategy: a fit profile for Python, pytest, and ba
 - What it produced: the scan and direct grades for #35 and #37, with #35 accepted and #37 rejected on the bounded-scope check
 - Difficulties: it counted repo-owner commits as maintainer activity, ignored claim comments and reservation language, and its file-count rule was ambiguous; the first scan also ran only one query
 - What changed: patched the maintainer check to require owner or collaborator comments within 30 days, added issue-body reads for AI rules, limited bounded issues to two named files, and switched the query to pytest
-
-
 ---
 
 ## Understanding the Issue
