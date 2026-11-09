@@ -8,10 +8,10 @@ format criteria grade exactly that. Your course repo link is the whole submissio
 files and no evidence uploads are part of Assignment 5.
 
 **Contribution Number:** [1]
-**Student:** [Student name]
-**GitHub Username:** [your GitHub username, exactly as it appears on your profile - no @, no
-profile URL. Your comments upstream are identified by this name.]
-**Issue:** [GitHub issue link]
+**Student:** Elaheh Baharlouei
+**GitHub Username:** Elaheh-colab
+**Issue:** https://github.com/wehnsdaefflae/llmsectest/issues/37
+
 **Pull Request:** [GitHub PR link, once opened]
 
 One repository, built across units 5 to 8, telling the whole story of your real
@@ -78,25 +78,17 @@ drafted, what you did with the draft.]
 ---
 
 ## Why I Chose This Issue
+## Why I Chose This Issue
 
-[1-2 paragraphs in your own words: how you searched, what your scan
-surfaced, what your scout's verdict said, why this issue fits your
-profile, and what you hope to learn. If your scout's verdict on it
-was reject and you chose it anyway, say so here and say why; choosing
-against your own tool silently is what loses points. Close with an
-honest read of the tool itself: where the scout fell short on a real
-wild search and what you changed or would change, or what convinced
-you it held up. **Record the link to your claim comment in this section too.**
-Not claimed yet? Write `claim pending` and today's date where the link goes,
-and add the link the moment your claim lands.]
+I searched with issue-scout's strategy: a fit profile for Python, pytest, and backend work, two `gh search issues` queries, and ranking filters that drop assigned and stale issues. The first scans surfaced open-source candidates that mostly failed on maintainer activity or on AI rules, so I broadened the rubric and re-ran the scan. Then I graded two llmsectest issues directly: #35 was accepted, and #37 was rejected on the bounded-scope check, because it names three report files and the rule allows two. I chose #37 anyway because the fix adds one labeled field to the reports, and it has less overlap with other work than #35, which touches the LLM10 detector that PR #22 changed recently. My claim comment is at [(https://github.com/wehnsdaefflae/llmsectest/issues/37#issuecomment-6729558550)]. The scout fell short in several ways: the maintainer check counted repo-owner commits instead of responses, it ignored claim comments and reservations in issue bodies, and its file-count rule was ambiguous. I patched the rubric for the first two and recorded the third in scan-notes.md.
 
 **Toolkit**
 
-- Tool: issue-scout (your scout: your search strategy, your rubric),
-  and how you used it
-- What it produced: [the scan and its verdict on this issue, described]
-- Difficulties: [where it fell short, or "none met" if none did]
-- What changed: [what you patched or would update, or "nothing"]
+- Tool: issue-scout (your scout: your search strategy, your rubric), and how you used it
+- What it produced: the scan and direct grades for #35 and #37, with #35 accepted and #37 rejected on the bounded-scope check
+- Difficulties: it counted repo-owner commits as maintainer activity, ignored claim comments and reservation language, and its file-count rule was ambiguous; the first scan also ran only one query
+- What changed: patched the maintainer check to require owner or collaborator comments within 30 days, added issue-body reads for AI rules, limited bounded issues to two named files, and switched the query to pytest
+
 
 ---
 
