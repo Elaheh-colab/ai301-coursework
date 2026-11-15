@@ -12,7 +12,7 @@ files and no evidence uploads are part of Assignment 5.
 **GitHub Username:** Elaheh-colab
 **Issue:** https://github.com/wehnsdaefflae/llmsectest/issues/37
 
-**Pull Request:** [GitHub PR link, once opened]
+**Pull Request:** https://github.com/wehnsdaefflae/llmsectest/pull/43
 
 One repository, built across units 5 to 8, telling the whole story of your real
 contribution. Fill it as you work, not at the end — the sections below ask for evidence that
@@ -236,7 +236,7 @@ Printed an `Aggregation:` line under the console risk score (the test failed fir
 
 ---
 
-**Pull Request:** https://github.com/wehnsdaefflae/llmsectest/pull/43
+## Pull Request
 
 **PR Link:** https://github.com/wehnsdaefflae/llmsectest/pull/43
 
