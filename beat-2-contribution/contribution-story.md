@@ -59,11 +59,10 @@ one in the week it belongs to.
 
 I built issue-scout's search strategy: two `gh search issues` queries, a fit profile, and ranking filters that drop assigned and stale issues, then graded the top results. The first scan fell short: only one query ran, the maintainer check counted repo-owner commits instead of responses, and the rubric passed issues it should have rejected, including #519, whose body banned coding agents from the completing PR. I patched the rubric to require owner or collaborator comments within 30 days, read issue bodies for AI bans, and limit bounded issues to two named files, then re-ran the scan with a pytest query and logged each change in scan-notes.md.
 
-**Unit 6: [one line on the tool work]**
+**Unit 6: Installed the voice guard and wrote a repo memory file**
 
-[2-4 sentences: the voice-guard, the repo-memory file. What broke or
-fell short, and what changed because of it. "Nothing broke" counts when
-it is true - say how you know.]
+I merged my three voice guides into one, added an Upstream section for claims, questions, and pings, installed the voice-guard hook, and wrote a 30-line CLAUDE.local.md for my llmsectest clone, kept out of git with .git/info/exclude. The guard fell short twice: it couldn't run until I put `claude` on my PATH, and it blocked my claim draft twice because the draft gave a first step but never said what I planned to change. I rewrote the draft to state the plan, the first step, and a date, and it passed. I did not post it, because the maintainer had already assigned me the issue and the guard cannot see an existing claim.
+
 
 **Unit 7: [one line on the tool work]**
 
