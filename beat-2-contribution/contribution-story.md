@@ -97,26 +97,26 @@ An honest read of the scout: it fell short in several ways. The maintainer check
 
 **Problem Description**
 
-[In your own words, what is broken or missing?]
+llmsectest reports publish aggregated numbers: a score per OWASP category, a severity score, and an overall risk score. They never say how those numbers were combined, so two reports built with different aggregation look identical.
 
 **Expected Behavior**
 
-[What should happen?]
+Each aggregated score in the report names the function that produced it, in the report file itself and in the terminal summary. The name comes from the function, so the label cannot drift away from the code.
 
 **Current Behavior**
 
-[What actually happens?]
+The offline demo run's JSON summary has a `risk_assessment` block with `overall_score`, `category_scores`, and `severity_scores` and no field naming how they were computed. `grep -i aggregat` over the reports finds nothing.
 
 **Affected Components**
 
-[Which parts of the codebase are involved?]
+`src/llmsectest/reporting/risk_scorer.py` (computes the scores), `json_summary_generator.py` (writes `risk_assessment`), `console_summary.py` (prints the risk score), and the tests in `tests/test_core_modules.py` and `tests/test_report_formats.py`.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: Claude Code with my `CLAUDE.local.md` memory file, after one scoped orientation run over `src/llmsectest/reporting/`.
+- What it produced: a map of where the scores are computed and written, and the flow from results through statistics and the risk scorer to the generators.
+- Difficulties: the issue says group scores are computed in `statistics.py`, but that file only holds counts, and the orientation found no "group" concept. The real scores are in `risk_scorer.py`.
+- What changed: I recorded the mismatch and an open question for the maintainer in `CLAUDE.local.md`, and I based my plan on `risk_scorer.py`.
 
 ---
 
