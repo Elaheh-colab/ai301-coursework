@@ -157,34 +157,33 @@ macOS 15.7.3, Python 3.14.5 in a venv (`test-issue`), llmsectest 0.4.1 installed
 
 ---
 
-## Solution Approach
-
 **Analysis**
 
-The scores are computed inline: `_calculate_category_scores` (risk_scorer.py, line 169), `_calculate_severity_score` (line 147), and the weighted overall formula in `calculate_risk` (line 97). The `RiskScore` dataclass has no field for how they were computed. `JSONSummaryGenerator.generate` copies the `RiskScore` fields into `risk_assessment`, and `console_summary.py` prints the overall score, so no surface can state the aggregation.
+Three scores in `risk_assessment` are produced by inline arithmetic with no recorded name. `category_scores` come from `_calculate_category_scores` (risk_scorer.py, line 169: failure rate x 100 x a per-category multiplier, capped at 100). `severity_scores` come from `_calculate_severity_breakdown` (line 354: failure rate x 100 x weight/10 per severity, capped at 100). `overall_score` comes from the weighted sum in `calculate_risk` (line 97: 0.30 failure score + 0.25 severity impact + 0.20 mean category score + 0.15 trend + 0.10 baseline). `_calculate_severity_score` (line 147) only feeds the severity-impact term of the overall score; it does not fill `severity_scores`. The `RiskScore` dataclass has no field for how scores were computed. `JSONSummaryGenerator.generate` copies the `RiskScore` fields into `risk_assessment`, and `console_summary.py` prints the overall score, so no surface can state the aggregation. `statistics.py` and the SARIF tally hold counts, not scores, so they have no aggregation to name.
 
 **Proposed Solution**
 
-Add an `aggregations` mapping to `RiskScore`, filled from the scoring functions' own `__name__`, so the report asks the function for its name (the maintainer's guidance on #37). Copy it into `risk_assessment` in the JSON summary and print one line in the console summary. I am not changing the scoring formulas, the SARIF tally, the HTML and Markdown reports, or the issue's other two fields (absolute versus relative scores, and what a severity is a severity of), which the issue says belong in separate PRs.
+Extract the three calculations above into three small named functions in `risk_scorer.py`, each taking its weights as arguments and returning exactly what the code returns today. The names describe the math, for example `capped_scaled_failure_rate`, `weight_scaled_failure_rate`, and `weighted_factor_sum`. Add an `aggregations` mapping to `RiskScore`, filled from the `__name__` of the function that actually produces each score (`category_scores`, `severity_scores`, `overall_score`), so the report asks the function for its name (the maintainer's guidance on #37). The overall name covers the final weighted sum, not its inputs. Copy the mapping into `risk_assessment` in the JSON summary and print one line in the console summary. I am not changing the scoring results, the SARIF tally, `statistics.py` (counts only, no scores), the HTML and Markdown reports, or the issue's other two fields (absolute versus relative scores, and what a severity is a severity of), which the issue says belong in separate PRs.
 
 **Implementation Plan**
 
-1. Ask the maintainer which scores need the name. Default if no answer: `category_scores`, `severity_scores`, and `overall_score`.
-2. Write the failing test first in `tests/test_core_modules.py`: each name in `RiskScore.aggregations` equals the scoring function's `__name__`.
-3. In `risk_scorer.py`, add the `aggregations` field to `RiskScore` and fill it from the functions' `__name__`.
-4. In `json_summary_generator.py`, copy it into `risk_assessment`, with a test in `tests/test_report_formats.py`.
-5. In `console_summary.py`, print one line stating the aggregation, with a test.
-6. Run the manifest checks (`ruff`, `coverage run -m pytest -q`, `coverage report`), and add a `CHANGELOG.md` bullet under `[Unreleased]`.
+1. Ask the maintainer whether extracting named functions is welcome. Default if no answer: name `category_scores`, `severity_scores`, and `overall_score`.
+2. Before changing code, record the demo run's `risk_assessment` scores, so I can show they are identical afterward.
+3. Write the failing test first in `tests/test_core_modules.py`: `RiskScore.aggregations` maps each of the three scores to the `__name__` of the function that fills it, and that function's output on known statistics equals the score in the report. It fails before the fix because the field does not exist.
+4. In `risk_scorer.py`, extract the three functions and add the `aggregations` field. The existing score tests must pass unchanged.
+5. In `json_summary_generator.py`, copy it into `risk_assessment`. A test in `tests/test_report_formats.py` asserts `risk_assessment["aggregations"]["category_scores"]` equals the function's `__name__` in a generated summary.
+6. In `console_summary.py`, print one line stating the aggregation. A console summary test asserts that line contains the function's name.
+7. Run the manifest checks (`ruff`, `coverage run -m pytest -q`, `coverage report`), and add a `CHANGELOG.md` bullet under `[Unreleased]`.
 
 Deviations from this plan will be recorded here as they happen.
 
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: plan-check, in live mode, run on my plan.md and my draft plan comment together, three times.
+- What it produced: two rejects and then an accept. The first said the diagnosis was unclear because no repro comment was posted on the issue; the second failed the diagnosis because I tied `severity_scores` to the wrong function.
+- Difficulties: my first plan would have labeled `severity_scores` with a function that never fills that field, and the labels would have read as private method names. The skill also expects a repro comment on the thread, which this step says not to post, and its procedure says ready/hold while its output says accept/reject.
+- What changed: I revised the plan to extract named functions, mapped each score to the function that actually fills it, put the real grep output and versions in the comment, and added why the SARIF tally and `statistics.py` are out of scope.
 
 ---
 
