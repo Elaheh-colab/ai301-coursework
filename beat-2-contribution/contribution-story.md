@@ -161,22 +161,23 @@ macOS 15.7.3, Python 3.14.5 in a venv (`test-issue`), llmsectest 0.4.1 installed
 
 **Analysis**
 
-[Your analysis of the root cause: what is causing the issue, traced
-to the files and functions involved.]
+The scores are computed inline: `_calculate_category_scores` (risk_scorer.py, line 169), `_calculate_severity_score` (line 147), and the weighted overall formula in `calculate_risk` (line 97). The `RiskScore` dataclass has no field for how they were computed. `JSONSummaryGenerator.generate` copies the `RiskScore` fields into `risk_assessment`, and `console_summary.py` prints the overall score, so no surface can state the aggregation.
 
 **Proposed Solution**
 
-[High-level description of your fix approach, and what you are
-deliberately NOT changing.]
+Add an `aggregations` mapping to `RiskScore`, filled from the scoring functions' own `__name__`, so the report asks the function for its name (the maintainer's guidance on #37). Copy it into `risk_assessment` in the JSON summary and print one line in the console summary. I am not changing the scoring formulas, the SARIF tally, the HTML and Markdown reports, or the issue's other two fields (absolute versus relative scores, and what a severity is a severity of), which the issue says belong in separate PRs.
 
 **Implementation Plan**
 
-1. [Modify file X to do Y]
-2. [Add or change Z]
-3. [Update tests]
+1. Ask the maintainer which scores need the name. Default if no answer: `category_scores`, `severity_scores`, and `overall_score`.
+2. Write the failing test first in `tests/test_core_modules.py`: each name in `RiskScore.aggregations` equals the scoring function's `__name__`.
+3. In `risk_scorer.py`, add the `aggregations` field to `RiskScore` and fill it from the functions' `__name__`.
+4. In `json_summary_generator.py`, copy it into `risk_assessment`, with a test in `tests/test_report_formats.py`.
+5. In `console_summary.py`, print one line stating the aggregation, with a test.
+6. Run the manifest checks (`ruff`, `coverage run -m pytest -q`, `coverage report`), and add a `CHANGELOG.md` bullet under `[Unreleased]`.
 
-[Record deviations here as they happen: what changed mid-build and
-why. A recorded deviation is honest work; silent drift is not.]
+Deviations from this plan will be recorded here as they happen.
+
 
 **Toolkit**
 
