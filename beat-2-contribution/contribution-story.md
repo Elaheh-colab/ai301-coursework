@@ -214,9 +214,10 @@ built, decisions you made when you made them, wrong turns included.]
 
 Made the branch `feat/37-name-score-aggregation` and wrote the failing test first: it expects `RiskScore.aggregations` to name the function behind each score, and it failed with `'RiskScore' object has no attribute 'aggregations'`. Then I extracted the three score calculations in `risk_scorer.py` into named functions (`capped_scaled_failure_rate`, `weight_scaled_failure_rate`, `weighted_factor_sum`), added the `aggregations` field to `RiskScore`, and confirmed the demo run's overall, category, and severity scores are identical to the ones I recorded before the change. `coverage run -m pytest -q` passes (1071 tests) and `ruff check` is clean.
 
-**[Date]**
+**2026-11-15**
 
-[Entry]
+Wrote `aggregations` into the JSON summary's `risk_assessment`. The test failed first with `KeyError: 'aggregations'`; after the one-line change in `json_summary_generator.py`, the demo run's report shows `capped_scaled_failure_rate`, `weight_scaled_failure_rate`, and `weighted_factor_sum`, and the scores are unchanged. `coverage run -m pytest -q` passes (1072 tests).
+
 
 **Toolkit**
 
