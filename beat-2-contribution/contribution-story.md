@@ -157,6 +157,8 @@ macOS 15.7.3, Python 3.14.5 in a venv (`test-issue`), llmsectest 0.4.1 installed
 
 ---
 
+## Solution Approach
+
 **Analysis**
 
 Three scores in `risk_assessment` are produced by inline arithmetic with no recorded name. `category_scores` come from `_calculate_category_scores` (risk_scorer.py, line 169: failure rate x 100 x a per-category multiplier, capped at 100). `severity_scores` come from `_calculate_severity_breakdown` (line 354: failure rate x 100 x weight/10 per severity, capped at 100). `overall_score` comes from the weighted sum in `calculate_risk` (line 97: 0.30 failure score + 0.25 severity impact + 0.20 mean category score + 0.15 trend + 0.10 baseline). `_calculate_severity_score` (line 147) only feeds the severity-impact term of the overall score; it does not fill `severity_scores`. The `RiskScore` dataclass has no field for how scores were computed. `JSONSummaryGenerator.generate` copies the `RiskScore` fields into `risk_assessment`, and `console_summary.py` prints the overall score, so no surface can state the aggregation. `statistics.py` and the SARIF tally hold counts, not scores, so they have no aggregation to name.
