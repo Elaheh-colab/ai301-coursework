@@ -64,10 +64,11 @@ I built issue-scout's search strategy: two `gh search issues` queries, a fit pro
 I merged my three voice guides into one, added an Upstream section for claims, questions, and pings, installed the voice-guard hook, and wrote a 30-line CLAUDE.local.md for my llmsectest clone, kept out of git with .git/info/exclude. The guard fell short twice: it couldn't run until I put `claude` on my PATH, and it blocked my claim draft twice because the draft gave a first step but never said what I planned to change. I rewrote the draft to state the plan, the first step, and a date, and it passed. I did not post it, because the maintainer had already assigned me the issue and the guard cannot see an existing claim.
 
 
-**Unit 7: [one line on the tool work]**
+**Unit 7: Installed the ship-gate and wrote my gate manifest**
 
-[2-4 sentences: the ship-gate and your gate manifest. What it produced
-on your real branch, what fought you, what changed because of it.]
+
+I installed the ship-gate and wrote a manifest of three checks taken from the project's CI and CONTRIBUTING.md (`ruff check`, `coverage run -m pytest -q`, `coverage report`), using the venv's own tools so they run in a fresh terminal. The gate passed my branch every time, but its pr-precheck notes kept finding real problems: a stale 1059 test count in my description (main collects 1070), no environment or deviation note, and a title with no issue number. I fixed each of them before opening the PR. What stopped me was my tokens, not the gate: a fine-grained token could not push to my fork or open a PR on the maintainer's repo, so I added Contents and Pull requests permissions and then switched `gh` to a classic token, and I re-ran the gate because its PASS only lasts 30 minutes.
+
 
 **Unit 8: [one line on the tool work]**
 
