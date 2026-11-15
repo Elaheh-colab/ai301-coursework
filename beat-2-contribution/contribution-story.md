@@ -210,9 +210,9 @@ observable named is not a strategy.]
 [A running log, added to as you work. Date each entry. What you
 built, decisions you made when you made them, wrong turns included.]
 
-**[Date]**
+**2026-11-15**
 
-[Entry]
+Made the branch `feat/37-name-score-aggregation` and wrote the failing test first: it expects `RiskScore.aggregations` to name the function behind each score, and it failed with `'RiskScore' object has no attribute 'aggregations'`. Then I extracted the three score calculations in `risk_scorer.py` into named functions (`capped_scaled_failure_rate`, `weight_scaled_failure_rate`, `weighted_factor_sum`), added the `aggregations` field to `RiskScore`, and confirmed the demo run's overall, category, and severity scores are identical to the ones I recorded before the change. `coverage run -m pytest -q` passes (1071 tests) and `ruff check` is clean.
 
 **[Date]**
 
