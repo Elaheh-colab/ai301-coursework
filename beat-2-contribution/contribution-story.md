@@ -179,6 +179,9 @@ Extract the three calculations above into three small named functions in `risk_s
 
 Deviations from this plan will be recorded here as they happen.
 
+2026-11-15: Plan step 3 asked the test to also check each function's output against the reported score; the tests check the names, and the existing score tests plus the unchanged demo scores cover the values. Plan step 1 (asking the maintainer first) was not done; the question is in the PR instead.
+
+
 
 **Toolkit**
 
@@ -193,7 +196,7 @@ Deviations from this plan will be recorded here as they happen.
 
 I re-ran my reproduction on main and on my branch. On main, `grep -n -i "aggregat" results/*.json results/*.sarif` prints nothing, `risk_assessment` has no `aggregations` key, and the console risk section ends at the Confidence line. On my branch the same steps find `"aggregations"` in the JSON with `capped_scaled_failure_rate`, `weight_scaled_failure_rate`, and `weighted_factor_sum`, and the console prints an `Aggregation:` line with the same names. The overall, category, and severity scores are identical before and after (overall 70.07156794425087).
 
-Three new tests each failed before their fix: on the `RiskScore` object (`AttributeError: ... no attribute 'aggregations'`), in the JSON summary (`KeyError: 'aggregations'`), and in the console summary (the function name was not in the output). Then I ran the repo's own checks from my manifest on the branch: `ruff check src tests examples` passes, `coverage run -m pytest -q` passes all 1073 tests (1059 before my change), and `coverage report` totals 88%. The full output is in `test_evidence.md`.
+Three new tests each failed before their fix: on the `RiskScore` object (`AttributeError: ... no attribute 'aggregations'`), in the JSON summary (`KeyError: 'aggregations'`), and in the console summary (the function name was not in the output). Then I ran the repo's own checks from my manifest on the branch: `ruff check src tests examples` passes, `coverage run -m pytest -q` passes all 1073 tests (1070 on main before my change), and `coverage report` totals 88%. The full output is in `test_evidence.md`.
 
 
 **Toolkit**
