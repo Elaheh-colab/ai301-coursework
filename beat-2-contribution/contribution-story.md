@@ -236,9 +236,9 @@ Printed an `Aggregation:` line under the console risk score (the test failed fir
 
 ---
 
-## Pull Request
-
 **Pull Request:** https://github.com/wehnsdaefflae/llmsectest/pull/43
+
+**PR Link:** https://github.com/wehnsdaefflae/llmsectest/pull/43
 
 **PR Description:** The PR extracts the arithmetic behind the three risk scores in `risk_scorer.py` into named functions (`capped_scaled_failure_rate`, `weight_scaled_failure_rate`, `weighted_factor_sum`), adds `RiskScore.aggregations` filled from each function's own `__name__`, writes it into the JSON summary's `risk_assessment`, and prints one `Aggregation:` line under the console risk score. The scores are unchanged. The description shows the before and after output from the demo scan, the three tests that failed before their fix, and the passing checks (ruff clean, 1073 passed against 1070 on main, 88% coverage). It says what I left out (`statistics.py`, the SARIF tally, the HTML and Markdown reports, and the issue's other two fields), discloses what Claude Code did, records two deviations from my plan, says `Fixes #37`, and asks the maintainer whether the aggregation should be named in `statistics.py` and `sarif_generator.py` too.
 
