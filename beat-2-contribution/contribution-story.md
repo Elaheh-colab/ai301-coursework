@@ -238,10 +238,10 @@ Printed an `Aggregation:` line under the console risk score (the test failed fir
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when opened]
+**Pull Request:** https://github.com/wehnsdaefflae/llmsectest/pull/43
 
-**PR Description:** [what the PR says; much of the content above
-adapts into it]
+**PR Description:** The PR extracts the arithmetic behind the three risk scores in `risk_scorer.py` into named functions (`capped_scaled_failure_rate`, `weight_scaled_failure_rate`, `weighted_factor_sum`), adds `RiskScore.aggregations` filled from each function's own `__name__`, writes it into the JSON summary's `risk_assessment`, and prints one `Aggregation:` line under the console risk score. The scores are unchanged. The description shows the before and after output from the demo scan, the three tests that failed before their fix, and the passing checks (ruff clean, 1073 passed against 1070 on main, 88% coverage). It says what I left out (`statistics.py`, the SARIF tally, the HTML and Markdown reports, and the issue's other two fields), discloses what Claude Code did, records two deviations from my plan, says `Fixes #37`, and asks the maintainer whether the aggregation should be named in `statistics.py` and `sarif_generator.py` too.
+
 
 **Maintainer Feedback:**
 
@@ -249,16 +249,14 @@ adapts into it]
   state and costs you nothing]
 - [Date]: [how you addressed it]
 
-**Status:** [Awaiting review / Iterating / Merged / Closed. The
-status is a fact you record, never a grade: the PR is graded as
-opened.]
+**Status:** Awaiting review
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: the ship-gate, a hook that runs my manifest checks (`ruff`, `coverage run -m pytest -q`, `coverage report`) and then my pr-precheck on my branch, plan, evidence, and description before `gh pr create`.
+- What it produced: four runs, all PASS. Each pr-precheck read-out also listed real fixes: the stale 1059 test count in my description (main collects 1070), the missing environment and deviation note, and a title with no issue number.
+- Difficulties: the PASS only lasts 30 minutes, so I had to re-run it after a token problem. My fine-grained token could not push to my fork or open a PR on someone else's repo.
+- What changed: I corrected the description, `plan.md`, and the title, and switched `gh` to a classic token with the `repo` scope. I also ran `gh repo set-default wehnsdaefflae/llmsectest` so the PR went to the original repo.
 
 ---
 
