@@ -218,6 +218,10 @@ Made the branch `feat/37-name-score-aggregation` and wrote the failing test firs
 
 Wrote `aggregations` into the JSON summary's `risk_assessment`. The test failed first with `KeyError: 'aggregations'`; after the one-line change in `json_summary_generator.py`, the demo run's report shows `capped_scaled_failure_rate`, `weight_scaled_failure_rate`, and `weighted_factor_sum`, and the scores are unchanged. `coverage run -m pytest -q` passes (1072 tests).
 
+**2026-11-15**
+
+Printed an `Aggregation:` line under the console risk score (the test failed first because the function names were not in the output) and added a CHANGELOG entry under Unreleased, `### Added`. All 1073 tests pass and `ruff check` is clean. One deviation from my plan: I did not ask the maintainer a question first (step 1), because the maintainer's earlier note on #37 already said the function should be the single source of the name; I will raise the question about the other scores in the PR instead.
+
 
 **Toolkit**
 
