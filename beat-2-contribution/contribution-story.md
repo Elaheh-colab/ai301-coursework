@@ -124,31 +124,36 @@ An honest read of the scout: it fell short in several ways. The maintainer check
 
 **Environment Setup**
 
-[What a stranger would need to stand this up: your operating system,
-the relevant versions (language, runtime, package manager, the project
-itself), and how you set the project up. Then the challenges you faced
-and how you solved them, or that none came up.]
+macOS 15.7.3, Python 3.14.5 in a venv (`test-issue`), llmsectest 0.4.1 installed from my clone at commit `9a62aa8` (2026-11-06) with `pip install -e ".[dev,cvss]"`. No challenges setting up the project: the install and the offline demo ran on the first try, and `coverage run -m pytest -q` passed all 1059 tests.
 
 **Steps to Reproduce**
 
-1. [Step 1]
-2. [Step 2]
-3. [Observed result]
+1. Clone my fork, check out commit `9a62aa8`, create and activate a venv, and install with `pip install -e ".[dev,cvss]"`.
+2. From the repo root, run the offline demo scan: `python -m llmsectest --report-formats=sarif,json`. It writes `results/demo-vulnerable.sarif` and `results/pytest-summary.json`.
+3. Search both reports for an aggregation name: `grep -n -i "aggregat" results/*.json results/*.sarif`.
+4. Observed result: the grep prints nothing, and the `risk_assessment` block (line 2140 of `results/pytest-summary.json`) holds `overall_score`, `category_scores`, and `severity_scores` with no field naming how they were combined.
 
 **Reproduction Evidence**
 
-- **Commit showing reproduction:** [link to commit in your fork]
-- **Screenshots/logs:** [if applicable]
-- **My findings:** [what you discovered during reproduction; an
-  honest, evidenced cannot-reproduce that led you to re-pick or ask
-  the maintainer belongs here and costs you nothing]
+- **Commit showing reproduction:** none
+- **Screenshots/logs:**
+  ```
+  $ grep -n -i "aggregat" results/*.json results/*.sarif
+  (no output)
+
+  results/pytest-summary.json:2140:  "risk_assessment": {
+  results/pytest-summary.json:2141:    "overall_score": 70.07156794425087,
+  results/pytest-summary.json:2144:    "category_scores": {
+  ```
+- **My findings:** the report states scores but never names the function that aggregated them, which matches what the issue describes. I have not yet checked the console output or the HTML and Markdown reports, and I still need to confirm with the maintainer which scores should carry the name.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: repro-check, in live mode, run on my repro report and my claim draft together.
+- What it produced: an accept verdict with every check passing, plus voice-guide notes on the claim draft.
+- Difficulties: it noted there was no explicit clone-and-checkout step in my report, and that my claim draft is redundant because the maintainer had already assigned me the issue.
+- What changed: I added a clone-and-checkout step to the steps above, and I did not post a second claim.
+
 
 ---
 
