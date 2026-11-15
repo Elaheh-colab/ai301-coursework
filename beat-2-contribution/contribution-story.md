@@ -191,17 +191,17 @@ Deviations from this plan will be recorded here as they happen.
 
 ## Testing Strategy
 
-[What observable checks prove the fix: your reproduction steps re-run
-against the built change (before and after), and the repo's own test
-suite or checks with the outcome shown. "Tests pass" with nothing
-observable named is not a strategy.]
+I re-ran my reproduction on main and on my branch. On main, `grep -n -i "aggregat" results/*.json results/*.sarif` prints nothing, `risk_assessment` has no `aggregations` key, and the console risk section ends at the Confidence line. On my branch the same steps find `"aggregations"` in the JSON with `capped_scaled_failure_rate`, `weight_scaled_failure_rate`, and `weighted_factor_sum`, and the console prints an `Aggregation:` line with the same names. The overall, category, and severity scores are identical before and after (overall 70.07156794425087).
+
+Three new tests each failed before their fix: on the `RiskScore` object (`AttributeError: ... no attribute 'aggregations'`), in the JSON summary (`KeyError: 'aggregations'`), and in the console summary (the function name was not in the output). Then I ran the repo's own checks from my manifest on the branch: `ruff check src tests examples` passes, `coverage run -m pytest -q` passes all 1073 tests (1059 before my change), and `coverage report` totals 88%. The full output is in `test_evidence.md`.
+
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: my ship-gate manifest (`ruff check`, `coverage run -m pytest -q`, `coverage report`), run by hand on the branch, plus the demo scan from my reproduction. The gate itself runs the same commands when I open the PR.
+- What it produced: before and after output for the reproduction, three failing-first tests, and clean manifest checks, collected in `test_evidence.md`.
+- Difficulties: plain `pytest` fails one unrelated test (`test_llm08_fixture_design.py`, `No module named 'tests'`) on main as well as on my branch, because it only imports under `python -m pytest`.
+- What changed: I used the project's own `coverage run -m pytest -q` as the test command everywhere, and confirmed the failure also happens on main.
 
 ---
 
@@ -225,10 +225,11 @@ Printed an `Aggregation:` line under the console risk score (the test failed fir
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: Claude Code with my `CLAUDE.local.md` memory file, writing each test first and then the fix, one commit per plan step.
+- What it produced: four commits on `feat/37-name-score-aggregation`: the named functions and `RiskScore.aggregations`, the JSON summary field, the console line, and the CHANGELOG entry.
+- Difficulties: ruff flagged missing blank lines after my first edit, two edits left stray blank lines in the diff, and I skipped plan step 1 (asking the maintainer a question) because the maintainer's earlier note already covered it.
+- What changed: I fixed the spacing before committing, and recorded the skipped step as a deviation in my Implementation Notes entry.
+
 
 ---
 
