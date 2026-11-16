@@ -70,10 +70,9 @@ I merged my three voice guides into one, added an Upstream section for claims, q
 I installed the ship-gate and wrote a manifest of three checks taken from the project's CI and CONTRIBUTING.md (`ruff check`, `coverage run -m pytest -q`, `coverage report`), using the venv's own tools so they run in a fresh terminal. The gate passed my branch every time, but its pr-precheck notes kept finding real problems: a stale 1059 test count in my description (main collects 1070), no environment or deviation note, and a title with no issue number. I fixed each of them before opening the PR. What stopped me was my tokens, not the gate: a fine-grained token could not push to my fork or open a PR on the maintainer's repo, so I added Contents and Pull requests permissions and then switched `gh` to a classic token, and I re-ran the gate because its PASS only lasts 30 minutes.
 
 
-**Unit 8: [one line on the tool work]**
+**Unit 8: Ran the PR monitor on my PR and drafted my playbook**
 
-[2-4 sentences: the PR-monitor and your playbook. What it read, what it
-drafted, what you did with the draft.]
+I filled in my playbook (response rules, a 3-day staleness threshold from five merged PRs, one nudge, and walk-away criteria), then ran the monitor on PR #43. It drafted a wait note, since the PR was under a day old with no replies, and I didn't post it: I decided to wait and check each run. I hit a PATH problem because the monitor calls the Claude CLI, which I fixed by prefixing the command with `PATH="$HOME/.local/bin:$PATH"`. A rule I'd write differently is the nudge: I'd keep the threshold, but ask for a review rather than a yes or no on the open question.
 
 ---
 
