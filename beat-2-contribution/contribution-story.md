@@ -210,8 +210,6 @@ Three new tests each failed before their fix: on the `RiskScore` object (`Attrib
 
 ## Implementation Notes
 
-[A running log, added to as you work. Date each entry. What you
-built, decisions you made when you made them, wrong turns included.]
 
 **2026-11-15**
 
@@ -224,6 +222,14 @@ Wrote `aggregations` into the JSON summary's `risk_assessment`. The test failed 
 **2026-11-15**
 
 Printed an `Aggregation:` line under the console risk score (the test failed first because the function names were not in the output) and added a CHANGELOG entry under Unreleased, `### Added`. All 1073 tests pass and `ruff check` is clean. One deviation from my plan: I did not ask the maintainer a question first (step 1), because the maintainer's earlier note on #37 already said the function should be the single source of the name; I will raise the question about the other scores in the PR instead.
+
+**2026-11-15**
+
+Opened PR #43 against `wehnsdaefflae/llmsectest`. The push to my fork failed with a 403 and `gh pr create` failed with a token error, because my fine-grained token had no Contents or Pull requests permission and cannot open a PR on another person's repo. I added the permissions to push, then switched `gh` to a classic token with the `repo` scope, ran `gh repo set-default wehnsdaefflae/llmsectest`, re-ran the ship-gate, and opened the PR through Claude Code.
+
+**2026-11-15**
+
+Filled in my PR-monitor playbook (a 3-day threshold from five merged PRs) and ran the monitor on PR #43. It drafted a wait note, because the PR was under a day old with no replies, and I did not post anything. The monitor needed `PATH="$HOME/.local/bin:$PATH"` to find the Claude CLI.
 
 
 **Toolkit**
@@ -262,25 +268,23 @@ Printed an `Aggregation:` line under the console risk score (the test failed fir
 
 **Technical Skills Gained**
 
-[What you learned technically, named concretely.]
+I learned to trace where a number comes from in an unfamiliar codebase, using `grep` and by reading the functions that compute it, and to write the failing test first so each change has proof. I used git branches and small commits that each say what they do, and pushed to a fork. I also learned to run a project's own checks (`ruff check`, `coverage run -m pytest -q`) and read the coverage output. On the tooling side, I built and patched a scout rubric, a voice guard, a ship-gate manifest, and a PR-monitor playbook.
 
 **Challenges Overcome**
 
-[What was hard and how you solved it; point at the real events, the
-Toolkit blocks above are full of them.]
+The hardest parts were not the code. My voice guard blocked my claim draft twice until it said what I planned to change, and plan-check rejected my plan twice, the second time because I tied `severity_scores` to the wrong function. Pushing my branch failed with a 403 and opening the PR failed with a token error, because my fine-grained token had no Contents or Pull requests permission and cannot open a PR on someone else's repo; I fixed it by adding permissions and then switching `gh` to a classic token. The `claude` command was also missing from my PATH several times, and my scout rejected issue #37 only because the maintainer had assigned it to me, which I chose to keep.
 
 **What I'd Do Differently Next Time**
 
-[Reflection on your process.]
+I would check my token's permissions before my first push, and read each function that fills a score before writing the plan, so the label cannot name the wrong one. I would measure test counts on main myself instead of reusing an old number (I wrote 1059 when main had 1070). 
 
 ---
 
 ## Resources Used
 
-[What actually helped, not a reading list. List things this story
-already shows you using: the doc you followed to set the environment
-up, the thread that explained the bug, the person who answered you.
-One real entry beats ten plausible ones.]
+- Issue #37 and the maintainer's guidance on it, that the function should be the single source of the name: https://github.com/wehnsdaefflae/llmsectest/issues/37
+- My PR and its CI checks, which showed the tests passing: https://github.com/wehnsdaefflae/llmsectest/pull/43
+- The repo's CONTRIBUTING.md and PR template, for the failing-test rule and the checklist: https://github.com/wehnsdaefflae/llmsectest/blob/main/CONTRIBUTING.md
+- `src/llmsectest/reporting/risk_scorer.py`, where the three scores are computed
+- The INSTALL.md files in my Unit 6, 7, and 8 materials, for the voice guard, ship-gate, and PR monitor
 
-- [Link to documentation that helped]
-- [Discussion, issue, or post that helped]
