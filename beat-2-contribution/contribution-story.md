@@ -246,11 +246,14 @@ Printed an `Aggregation:` line under the console risk score (the test failed fir
 
 **Maintainer Feedback:**
 
+- 2026-11-15: none yet.
+
+
 - [Date]: [feedback received, or "none yet"; silence is a normal
   state and costs you nothing]
 - [Date]: [how you addressed it]
 
-**Status:** Awaiting review
+**Status:** Awaiting review (waiting on the maintainer)
 
 **Toolkit**
 
